@@ -29,7 +29,109 @@ STEP-4: Multiply the two matrices to obtain the cipher text of length three.
 STEP-5: Combine all these groups to get the complete cipher text.
 
 ## PROGRAM 
+```
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h> // Header for toupper()
 
+// Key matrices for encryption and decryption
+int keymat[3][3] = { {1, 2, 1}, {2, 3, 2}, {2, 2, 1} };
+int invkeymat[3][3] = { {-1, 0, 1}, {2, -1, 0}, {-2, 2, -1} };
+char key[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+// Function for encoding three characters
+void encode(char a, char b, char c, char ret[4]) {
+    int x, y, z;
+    int posa = (int)a - 65;
+    int posb = (int)b - 65;
+    int posc = (int)c - 65;
+
+    x = posa * keymat[0][0] + posb * keymat[1][0] + posc * keymat[2][0];
+    y = posa * keymat[0][1] + posb * keymat[1][1] + posc * keymat[2][1];
+    z = posa * keymat[0][2] + posb * keymat[1][2] + posc * keymat[2][2];
+
+    ret[0] = key[(x % 26 + 26) % 26];
+    ret[1] = key[(y % 26 + 26) % 26];
+    ret[2] = key[(z % 26 + 26) % 26];
+    ret[3] = '\0';
+}
+
+// Function for decoding three characters
+void decode(char a, char b, char c, char ret[4]) {
+    int x, y, z;
+    int posa = (int)a - 65;
+    int posb = (int)b - 65;
+    int posc = (int)c - 65;
+
+    x = posa * invkeymat[0][0] + posb * invkeymat[1][0] + posc * invkeymat[2][0];
+    y = posa * invkeymat[0][1] + posb * invkeymat[1][1] + posc * invkeymat[2][1];
+    z = posa * invkeymat[0][2] + posb * invkeymat[1][2] + posc * invkeymat[2][2];
+
+    ret[0] = key[(x % 26 + 26) % 26];
+    ret[1] = key[(y % 26 + 26) % 26];
+    ret[2] = key[(z % 26 + 26) % 26];
+    ret[3] = '\0';
+}
+
+// Main driver function
+int main() {
+    char msg[1000];
+    char enc[1000] = "";
+    char dec[1000] = "";
+    int n;
+
+    // Input message
+    strcpy(msg, "SecurityLaboratory");
+    printf("Simulation of Hill Cipher\n");
+    printf("Input message : %s\n", msg);
+
+    // Convert message to uppercase
+    for (int i = 0; i < strlen(msg); i++) {
+        msg[i] = toupper(msg[i]);
+    }
+
+    // Remove spaces and calculate padding
+    n = strlen(msg) % 3;
+
+    // Append padding 'X' if necessary
+    if (n != 0) {
+        for (int i = 1; i <= (3 - n); i++) {
+            strcat(msg, "X");
+        }
+    }
+    printf("Plain text : %s\n", msg);
+
+    // Encryption
+    for (int i = 0; i < strlen(msg); i += 3) {
+        char a = msg[i];
+        char b = msg[i + 1];
+        char c = msg[i + 2];
+        char ret[4];
+        encode(a, b, c, ret);
+        strcat(enc, ret);
+    }
+    printf("Cipher text : %s\n", enc);
+
+    // Decryption
+    for (int i = 0; i < strlen(enc); i += 3) {
+        char a = enc[i];
+        char b = enc[i + 1];
+        char c = enc[i + 2];
+        char ret[4];
+        decode(a, b, c, ret);
+        strcat(dec, ret);
+    }
+    printf("Plain text : %s\n", dec);
+
+    return 0;
+}
+
+```
 ## OUTPUT
 
+
+![image](https://github.com/user-attachments/assets/7ba18cc6-c878-4c02-a0cf-9f104c5ca465)
+
 ## RESULT
+
+The Program Is Excuted successfully.
